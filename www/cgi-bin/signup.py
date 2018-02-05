@@ -5,10 +5,10 @@ html = """
 <!DOCTYPE html>
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="/login.css" />
+<link type="text/css" rel="stylesheet" href="/signup.css" />
 </head>
 <div class="container">
-    <h1>Login</h1>
+    <h1>Sign Up</h1>
     <hr>
 
     <label><b>Username</b></label>
@@ -17,10 +17,13 @@ html = """
     <label><b>Password</b></label>
     <input type="password" placeholder="Enter Password" name="password" required>
 
-    <button type="submit">Login</button>
-</div>
-</body>
-</html>
-"""
+    <label><b>Retype Password</b></label>
+    <input type="password" placeholder="Retype Password" name="password-retype" required>
 
+    <div class="clearfix">
+      <button type="button" class="cancelbtn">Cancel</button>
+      <button type="submit" class="signupbtn">Sign Up</button>
+    </div>
+</div>
+"""
 print(header + html)
