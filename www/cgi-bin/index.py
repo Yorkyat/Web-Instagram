@@ -1,3 +1,4 @@
 #! /usr/bin/env python3
-print("Content-Type: text/plain\r\n")
+header = "Content-Type: text/html\r\n"
 print("Hello World!")
+<a href="/cgi-bin/login.py">Login</a>
