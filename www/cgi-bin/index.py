@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 header = "Content-Type: text/html\r\n"
-print("Hello World!")
 html = """
 <html>
 <body>
