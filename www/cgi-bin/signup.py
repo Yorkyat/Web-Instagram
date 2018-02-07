@@ -72,7 +72,7 @@ if method == "POST":
   # some content is not filled
   if "username" not in form or "password" not in form or "password-retype" not in form:
     html_header()
-    html_error("Please fill in the username, password and password-retype.")
+    html_error("Please fill in the username, password and retyped password.")
     html_body()
     html_tail()
 
@@ -85,7 +85,7 @@ if method == "POST":
 
     # invalid input
     if not(regex_checking(username) & regex_checking(password) & regex_checking(password_retype)):
-      html_error("Invald username, password or password-retype")
+      html_error("Invald username, password or retyped password")
       html_body()
 
     else:
