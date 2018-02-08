@@ -20,25 +20,39 @@ button {
     border: none;
     cursor: pointer;
     width: 100%;
+    opacity: 0.9;
 }
 
 button:hover {
-    opacity: 0.8;
+    opacity: 1;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+    padding: 14px 20px;
+    background-color: #f44336;
+  }
+  
+/* Float cancel and update buttons and add an equal width */
+.cancelbtn, .loginbtn {
+float: left;
+width: 50%;
 }
 
 .container {
     padding: 16px;
 }
 
-span.psw {
-    float: right;
-    padding-top: 16px;
-}
+/* Clear floats */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
 
 /* Change styles for span and cancel button on extra small screens */
 @media screen and (max-width: 300px) {
-    span.psw {
-       display: block;
-       float: none;
-    }
+    .cancelbtn, .loginbtn {
+        width: 100%;
+      }
 }
