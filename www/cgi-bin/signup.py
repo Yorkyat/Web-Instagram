@@ -107,7 +107,7 @@ if method == "POST":
         try:
           hashed_password = hash_password(password)
           sql = "INSERT INTO `user` (`username`,`password`) VALUES (?,?)"
-          cursor.execute(sql, (username, hashed_password))
+          cursor.execute(sql, (username, hashed_password,))
           conn.commit()
           print("""<h1>Success</h1>
                   <p>Sign up success</p>
