@@ -103,25 +103,19 @@ if method == "POST":
         conn = sqlite3.connect('../index.db')
         cursor = conn.cursor()
         check_user_table_exist(cursor)
-        # used username
-        sql = "SELECT 1 FROM `user` WHERE `username` = ?"
-        cursor.execute(sql, username)
-        data = cursor.fetchall()
-        if len(data) != 0:
-          html_error("Username has been used")
-          html_body()
-        
-        # can sign up
-        else:
+
+        try:
           hashed_password = hash_password(password)
           sql = "INSERT INTO `user` (`username`,`password`) VALUES (?,?)"
           cursor.execute(sql, (username, hashed_password))
           conn.commit()
-          conn.close()
           print("""<h1>Success</h1>
                   <p>Sign up success</p>
                   <p>Will be redirected to index page in 2 seconds</p>
                   <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>""")
+        except:
+          html_error("Username has been used")
+          html_body()
     conn.close()
     html_tail()
 
