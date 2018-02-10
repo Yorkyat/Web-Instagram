@@ -6,6 +6,7 @@ import os
 import sqlite3
 import uuid
 import hashlib
+import cookies
 
 def html_header():
   print("""Content-Type: text/html\r\n
@@ -73,55 +74,63 @@ def check_user_table_exist(c):
 form = cgi.FieldStorage() 
 method = os.environ['REQUEST_METHOD']
 
-if method == "POST":
-  # some content is not filled
-  if "username" not in form or "password" not in form or "password-retype" not in form:
-    html_header()
-    html_error("Please fill in the username, password and retyped password.")
-    html_body()
-    html_tail()
+cookie = cookies.create_cookies()
+session_id = cookies.retrieve_cookies(cookie)
 
-  else:
-    html_header()
-
-    username = form.getvalue("username")
-    password = form.getvalue("password")
-    password_retype = form.getvalue("password-retype")
-
-    # invalid input
-    if not(regex_checking(username) & regex_checking(password) & regex_checking(password_retype)):
-      html_error("Invald username, password or retyped password")
+if session_id != False:
+  html_header()
+  print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>""")
+  html_tail()
+else:
+  if method == "POST":
+    # some content is not filled
+    if "username" not in form or "password" not in form or "password-retype" not in form:
+      html_header()
+      html_error("Please fill in the username, password and retyped password.")
       html_body()
+      html_tail()
 
     else:
-      # password and password-retype are not matched
-      if password != password_retype:
-        html_error("Password and password retyped are not matched")
+      html_header()
+
+      username = form.getvalue("username")
+      password = form.getvalue("password")
+      password_retype = form.getvalue("password-retype")
+
+      # invalid input
+      if not(regex_checking(username) & regex_checking(password) & regex_checking(password_retype)):
+        html_error("Invald username, password or retyped password")
         html_body()
-      
+
       else:
-        conn = sqlite3.connect('../index.db')
-        cursor = conn.cursor()
-        check_user_table_exist(cursor)
-
-        try:
-          hashed_password = hash_password(password)
-          sql = "INSERT INTO `user` (`username`,`password`) VALUES (?,?)"
-          cursor.execute(sql, (username, hashed_password,))
-          conn.commit()
-          print("""<h1>Success</h1>
-                  <p>Sign up success</p>
-                  <p>Will be redirected to index page in 2 seconds</p>
-                  <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>""")
-        except:
-          html_error("Username has been used")
+        # password and password-retype are not matched
+        if password != password_retype:
+          html_error("Password and password retyped are not matched")
           html_body()
-    conn.close()
-    html_tail()
+        
+        else:
+          conn = sqlite3.connect('../index.db')
+          cursor = conn.cursor()
+          check_user_table_exist(cursor)
 
-# go to sign up page or not using post request
-else:
-  html_header()
-  html_body()
-  html_tail()
+          try:
+            hashed_password = hash_password(password)
+            sql = "INSERT INTO `user` (`username`,`password`) VALUES (?,?)"
+            cursor.execute(sql, (username, hashed_password,))
+            conn.commit()
+            print("""<h1>Success</h1>
+                    <p>Sign up success</p>
+                    <p>Will be redirected to index page in 2 seconds</p>
+                    <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>""")
+          except:
+            html_error("Username has been used")
+            html_body()
+      conn.close()
+      html_tail()
+
+  # go to sign up page or not using post request
+  else:
+    html_header()
+    html_body()
+    html_tail()
 

@@ -72,66 +72,74 @@ def check_user_table_exist(c):
 form = cgi.FieldStorage() 
 method = os.environ['REQUEST_METHOD']
 
-if method == "POST":
-  # some content is not filled
-  if "username" not in form or "password" not in form:
-    html_header()
-    html_error("Please fill in the username, password.")
-    html_tail()
+cookie = cookies.create_cookies()
+session_id = cookies.retrieve_cookies(cookie)
 
-  else:
-    username = form.getvalue("username")
-    password = form.getvalue("password")
+if session_id != False:
+  html_header()
+  print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>""")
+  html_tail()
+else:
+    if method == "POST":
+    # some content is not filled
+        if "username" not in form or "password" not in form:
+            html_header()
+            html_error("Please fill in the username, password.")
+            html_tail()
 
-    # invalid input
-    if not(regex_checking(username) & regex_checking(password)):
-      html_header()
-      html_error("Invalid username, password")
+        else:
+            username = form.getvalue("username")
+            password = form.getvalue("password")
+
+            # invalid input
+            if not(regex_checking(username) & regex_checking(password)):
+                html_header()
+                html_error("Invalid username, password")
+
+            else:
+                conn = sqlite3.connect('../index.db')
+                cursor = conn.cursor()
+                check_user_table_exist(cursor)
+
+                # check username exists
+                sql = "SELECT password FROM 'user' WHERE username = ?"
+                cursor.execute(sql, (username,))
+                data = cursor.fetchone()
+
+                # username exists
+                if data != None:
+                    # check password correct
+                    db_password = data[0]
+                    if check_password(db_password, password):
+                        # set session id
+                        session_id = cookies.set_session_id(username, cursor, conn)
+                        # set cookies
+                        cookie = cookies.create_cookies()
+                        cookies.set_cookies(cookie, session_id)
+
+                        cookies.cookies_head(cookie)
+                        html_header()
+                        print("""<h1>Success</h1>
+                                <p>Login success</p>
+                                <p>Will be redirected to index page in 2 seconds</p>
+                                <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>""")
+
+
+                    # incorrect password
+                    else:
+                        html_header()
+                        html_error("Incorrect username or password")
+
+
+                # username not exist
+                else:
+                    html_header()
+                    html_error("Incorrect username or password")
+
+        conn.close()
+        html_tail()
 
     else:
-        conn = sqlite3.connect('../index.db')
-        cursor = conn.cursor()
-        check_user_table_exist(cursor)
-
-        # check username exists
-        sql = "SELECT password FROM 'user' WHERE username = ?"
-        cursor.execute(sql, (username,))
-        data = cursor.fetchone()
-
-        # username exists
-        if data != None:
-            # check password correct
-            db_password = data[0]
-            if check_password(db_password, password):
-                # set session id
-                session_id = cookies.set_session_id(username, cursor, conn)
-                # set cookies
-                cookie = cookies.create_cookies()
-                cookies.set_cookies(cookie, session_id)
-
-                cookies.cookies_head(cookie)
-                html_header()
-                print("""<h1>Success</h1>
-                        <p>Login success</p>
-                        <p>Will be redirected to index page in 2 seconds</p>
-                        <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>""")
-
-
-            # incorrect password
-            else:
-                html_header()
-                html_error("Incorrect username or password")
-
-
-        # username not exist
-        else:
-            html_header()
-            html_error("Incorrect username or password")
-
-    conn.close()
-    html_tail()
-
-else:
-  html_header()
-  html_body()
-  html_tail()
+        html_header()
+        html_body()
+        html_tail()
