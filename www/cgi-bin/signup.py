@@ -65,6 +65,11 @@ def check_password(hashed_password, user_password):
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
+# check table exist
+def check_user_table_exist(c):
+    sql = "CREATE TABLE IF NOT EXISTS `user` (`uid`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`username` TEXT NOT NULL UNIQUE,`password` TEXT NOT NULL)"
+    c.execute(sql)
+
 form = cgi.FieldStorage() 
 method = os.environ['REQUEST_METHOD']
 
@@ -97,8 +102,9 @@ if method == "POST":
       else:
         conn = sqlite3.connect('../index.db')
         cursor = conn.cursor()
+        check_user_table_exist(cursor)
         # used username
-        sql = "SELECT 1 FROM 'user' WHERE username = ?"
+        sql = "SELECT 1 FROM `user` WHERE `username` = ?"
         cursor.execute(sql, username)
         data = cursor.fetchall()
         if len(data) != 0:
@@ -108,7 +114,7 @@ if method == "POST":
         # can sign up
         else:
           hashed_password = hash_password(password)
-          sql = "INSERT INTO 'user' (username,password) VALUES (?,?)"
+          sql = "INSERT INTO `user` (`username`,`password`) VALUES (?,?)"
           cursor.execute(sql, (username, hashed_password))
           conn.commit()
           conn.close()
