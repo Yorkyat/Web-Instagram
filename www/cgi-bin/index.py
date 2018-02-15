@@ -50,7 +50,7 @@ def html_extend_cookies(session_id, cookie):
     cookies.cookies_extend(cookie)
     cookies.cookies_head(cookie)
 def check_img_table_exist(c):
-    sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`imgae` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL)"
+    sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`image` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL)"
     c.execute(sql)
 
 def html_index(session_id):
