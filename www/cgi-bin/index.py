@@ -84,50 +84,53 @@ def html_index(session_id):
   if no_of_photo != 0:
     page_total = math.ceil(no_of_photo / 8)
 
-  print("""
-  <div class="container text-center">
-    <div class="row justify-content-center text-center">
-  """)
-
-  index = 0
-  for i in images:
-    if ((index >= (8 * (page_no - 1)) and (index < (8 * page_no)) and (index <= (no_of_photo - 1)))):
-      print("""
-      <div class="card text-center justify-content-center align-self-center" style="height: 202px ; width: 202px;">
-        <a href={0}>
-          <img style="max-height: 200px; max-width: 200px; width: auto; height: auto" src={0}>
-        </a>
-      </div>
-      """.format("/img/"+images[index][0]))
-    index += 1
-
-  print("""
-    </div>
-  </div>
-  """)
-
-  # pagination
-  print("""
-  <form action = "/cgi-bin/index.py" method = "get">
+  if page_no > page_total:
+    print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>""")
+  else:
+    print("""
     <div class="container text-center">
-  """)
+      <div class="row justify-content-center text-center">
+    """)
 
-  if page_no == 1:
-    print("""<button type="button" class="btn btn-primary mx-3 disabled">Previous Page</button>""")
-  else:
-    print("""<a href="/cgi-bin/index.py?page_no={0}"><button type="button" class="btn btn-primary mx-3">Previous Page</button></a>""".format(page_no - 1))
+    index = 0
+    for i in images:
+      if ((index >= (8 * (page_no - 1)) and (index < (8 * page_no)) and (index <= (no_of_photo - 1)))):
+        print("""
+        <div class="card text-center justify-content-center align-self-center" style="height: 202px ; width: 202px;">
+          <a href={0}>
+            <img style="max-height: 200px; max-width: 200px; width: auto; height: auto" src={0}>
+          </a>
+        </div>
+        """.format("/img/"+images[index][0]))
+      index += 1
 
-  print("""<input style="width: 30px" type="text" value="{0}" name="page_no" required pattern="^[0-9]*$"> / {1}""".format(page_no, page_total))
-  
-  if page_no == page_total:
-    print("""<button type="button" class="btn btn-primary mx-3 disabled">Next Page</button>""")
-  else:
-    print("""<a href="/cgi-bin/index.py?page_no={0}"><button type="button" class="btn btn-primary mx-3">Next Page</button></a>""".format(page_no + 1))
-
-  print("""
+    print("""
+      </div>
     </div>
-  </form>
-  """)
+    """)
+
+    # pagination
+    print("""
+    <form action = "/cgi-bin/index.py" method = "get">
+      <div class="container text-center">
+    """)
+
+    if page_no == 1:
+      print("""<button type="button" class="btn btn-primary mx-3 disabled">Previous Page</button>""")
+    else:
+      print("""<a href="/cgi-bin/index.py?page_no={0}"><button type="button" class="btn btn-primary mx-3">Previous Page</button></a>""".format(page_no - 1))
+
+    print("""<input style="width: 30px" type="text" value="{0}" name="page_no" required pattern="^[0-9]*$"> / {1}""".format(page_no, page_total))
+    
+    if page_no == page_total:
+      print("""<button type="button" class="btn btn-primary mx-3 disabled">Next Page</button>""")
+    else:
+      print("""<a href="/cgi-bin/index.py?page_no={0}"><button type="button" class="btn btn-primary mx-3">Next Page</button></a>""".format(page_no + 1))
+
+    print("""
+      </div>
+    </form>
+    """)
 
 def html_upload(session_id):
   if session_id:
