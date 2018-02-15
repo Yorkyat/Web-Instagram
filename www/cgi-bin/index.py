@@ -112,7 +112,7 @@ def html_index(session_id):
     # pagination
     print("""
     <form action = "/cgi-bin/index.py" method = "get">
-      <div class="container text-center">
+      <div class="container text-center my-3">
     """)
 
     if page_no == 1:
