@@ -137,7 +137,7 @@ def html_upload(session_id):
     print("""
     <hr>
     <form enctype = "multipart/form-data" action = "upload.py" method = "post">
-      <div class="container text-center">
+      <div class="container text-center my-3">
         <span class="mx-3">Upload Photo</span>
         <input class="btn btn-primary mx-1" type = "file" name = "filename" />
         <input class="btn btn-primary mx-1" type = "submit" value = "Upload" />
