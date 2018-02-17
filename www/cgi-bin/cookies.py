@@ -11,42 +11,42 @@ def create_cookies():
     return http.cookies.SimpleCookie()
 
 # set cookies
-def set_cookies(cookies, value):
-    cookies['session'] = value
-    cookies['session']['expires'] = 1*1*3*60*60
+def set_cookies(cookies, name, value):
+    cookies[name] = value
+    cookies[name]['expires'] = 1*1*3*60*60
 
 # print cookies header
 def cookies_head(cookies):
     print(cookies)
 
 # extend cookies
-def cookies_extend(cookies):
+def cookies_extend(cookies, name):
     # check cookies exist
-    if retrieve_cookies(cookies):
-        cookies['session']['expires'] = 1*1*3*60*60
+    if retrieve_session_cookies(cookies, name):
+        cookies[name]['expires'] = 1*1*3*60*60
 
 # retrieve cookies
-def retrieve_cookies(cookies):
+def retrieve_session_cookies(cookies, name):
     if 'HTTP_COOKIE' in os.environ:
         cookie_string=os.environ.get('HTTP_COOKIE')
         cookies.load(cookie_string)
 
     try:
-        data = cookies['session'].value
+        data = cookies[name].value
         return data
     except KeyError:
         return False
 
 # delete cookies
-def del_cookies(cookies):
-    cookies['session']=''
-    cookies['session']['expires']='Thu, 01 Jan 1970 00:00:00 GMT'
+def del_cookies(cookies, name):
+    cookies[name]=''
+    cookies[name]['expires']='Thu, 01 Jan 1970 00:00:00 GMT'
 
 # generate random string
 def id_generator(size=128, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-# check table exist
+# check session table exist
 def check_session_table_exist(c):
     sql = "CREATE TABLE IF NOT EXISTS `session` (`username` TEXT NOT NULL UNIQUE, `session_id` TEXT UNIQUE)"
     c.execute(sql)

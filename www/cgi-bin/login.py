@@ -73,7 +73,7 @@ form = cgi.FieldStorage()
 method = os.environ['REQUEST_METHOD']
 
 cookie = cookies.create_cookies()
-session_id = cookies.retrieve_cookies(cookie)
+session_id = cookies.retrieve_session_cookies(cookie, 'session')
 
 if session_id != False:
   html_header()
@@ -115,7 +115,7 @@ else:
                         session_id = cookies.set_session_id(username, cursor, conn)
                         # set cookies
                         cookie = cookies.create_cookies()
-                        cookies.set_cookies(cookie, session_id)
+                        cookies.set_cookies(cookie, 'session', session_id)
 
                         cookies.cookies_head(cookie)
                         html_header()

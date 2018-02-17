@@ -14,14 +14,14 @@ def html_tail():
   """)
 
 cookie = cookies.create_cookies()
-session_id = cookies.retrieve_cookies(cookie)
+session_id = cookies.retrieve_session_cookies(cookie, 'session')
 
 if session_id == False:
   html_header()
   print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>""")
   html_tail()
 else:
-    cookies.del_cookies(cookie)
+    cookies.del_cookies(cookie, 'session')
     conn = sqlite3.connect('../index.db')
     cursor = conn.cursor()
     cookies.del_session_id(session_id, cursor, conn)

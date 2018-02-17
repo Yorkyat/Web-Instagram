@@ -47,8 +47,9 @@ def html_account(session_id):
 
 def html_extend_cookies(session_id, cookie):
   if session_id:
-    cookies.cookies_extend(cookie)
+    cookies.cookies_extend(cookie, 'session')
     cookies.cookies_head(cookie)
+    
 def check_img_table_exist(c):
     sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`image` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL)"
     c.execute(sql)
@@ -139,7 +140,7 @@ def html_upload(session_id):
     <form enctype = "multipart/form-data" action = "upload.py" method = "post">
       <div class="container text-center my-3">
         <span class="mx-3">Upload Photo</span>
-        <input class="btn btn-primary mx-1" type = "file" name = "filename" />
+        <input class="btn btn-primary mx-1" type = "file" name = "filename" accept="image/*" />
         <input class="btn btn-primary mx-1" type = "submit" value = "Upload" />
         <input class="ml-3" type = "radio" name = "upload-mode" value = "public" checked="checked" /> Public
         <input type = "radio" name = "upload-mode" value = "private" /> Private
@@ -148,7 +149,7 @@ def html_upload(session_id):
     """)
 
 cookie = cookies.create_cookies()
-session_id = cookies.retrieve_cookies(cookie)
+session_id = cookies.retrieve_session_cookies(cookie, 'session')
 
 html_extend_cookies(session_id, cookie)
 html_header()
