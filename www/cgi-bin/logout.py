@@ -14,7 +14,7 @@ def html_tail():
   """)
 
 cookie = cookies.create_cookies()
-session_id = cookies.retrieve_session_cookies(cookie, 'session')
+session_id = cookies.retrieve_cookies(cookie, 'session')
 
 if session_id == False:
   html_header()
@@ -22,6 +22,10 @@ if session_id == False:
   html_tail()
 else:
     cookies.del_cookies(cookie, 'session')
+    if cookies.retrieve_cookies(cookie, 'upload-mode'):
+      cookies.del_cookies(cookie, 'upload-mode')
+    if cookies.retrieve_cookies(cookie, 'image'):
+      cookies.del_cookies(cookie, 'image')
     conn = sqlite3.connect('../index.db')
     cursor = conn.cursor()
     cookies.del_session_id(session_id, cursor, conn)

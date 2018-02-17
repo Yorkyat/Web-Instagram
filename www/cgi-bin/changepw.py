@@ -80,7 +80,7 @@ form = cgi.FieldStorage()
 method = os.environ['REQUEST_METHOD']
 
 cookie = cookies.create_cookies()
-session_id = cookies.retrieve_session_cookies(cookie, 'session')
+session_id = cookies.retrieve_cookies(cookie, 'session')
 html_extend_cookies(session_id, cookie)
 
 if session_id == False:

@@ -58,7 +58,7 @@ def file_extension_matching(file_type, extension_name):
     return False
 
 cookie = cookies.create_cookies()
-session_id = cookies.retrieve_session_cookies(cookie, 'session')
+session_id = cookies.retrieve_cookies(cookie, 'session')
 
 if session_id == False:
   html_header()

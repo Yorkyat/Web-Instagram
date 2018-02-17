@@ -22,11 +22,11 @@ def cookies_head(cookies):
 # extend cookies
 def cookies_extend(cookies, name):
     # check cookies exist
-    if retrieve_session_cookies(cookies, name):
+    if retrieve_cookies(cookies, name):
         cookies[name]['expires'] = 1*1*3*60*60
 
 # retrieve cookies
-def retrieve_session_cookies(cookies, name):
+def retrieve_cookies(cookies, name):
     if 'HTTP_COOKIE' in os.environ:
         cookie_string=os.environ.get('HTTP_COOKIE')
         cookies.load(cookie_string)
