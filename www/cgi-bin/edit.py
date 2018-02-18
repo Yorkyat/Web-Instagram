@@ -113,10 +113,40 @@ else:
     html_extend_cookies(session_id, upload_mode, image, cookie)
     if "option" in form:
         option = form.getvalue('option')
-        filter = form.getvalue('filter')
+        if "filter" not in form:
+            filter_apply = None
+        else:
+            filter_parameter = form.getvalue('filter')
+            filter = filter_parameter.rsplit('%', 1)
+            filter_apply = filter[1]
 
         if option == "Discard":
-            print("Hello World")
+            cookies.del_cookies(cookie, 'upload-mode')
+            cookies.del_cookies(cookie, 'image')
+            if os.path.exists("./tmp/" + image):
+                os.remove("./tmp/" + image)
+            if os.path.exists("./tmp/" + '1_' + image):
+                os.remove("./tmp/" + '1_' + image)
+            if os.path.exists("./tmp/" + '2_' + image):
+                os.remove("./tmp/" + '2_' + image)
+            if os.path.exists("./tmp/" + '3_' + image):
+                os.remove("./tmp/" + '3_' + image)
+            if os.path.exists("./tmp/" + '4_' + image):
+                os.remove("./tmp/" + '4_' + image)
+            if os.path.exists("./tmp/" + '5_' + image):
+                os.remove("./tmp/" + '5_' + image)
+            if os.path.exists("./tmp/" + 'itm_4_' + image):
+                os.remove("./tmp/" + 'itm_4_' + image)
+            if os.path.exists("./tmp/" + 'tmp_3_' + image):
+                os.remove("./tmp/" + 'tmp_3_' + image)
+            if os.path.exists("./tmp/" + 'tmp_4_' + image):
+                os.remove("./tmp/" + 'tmp_4_' + image)
+
+            cookies.cookies_head(cookie)
+            html_header()
+            print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>""")
+            html_tail()
+            
         elif option == "Finish":
             print("Hello World")
         else:
@@ -154,11 +184,10 @@ else:
             elif filter_apply == "5":
                 subprocess.run(["magick", "convert", "./tmp/" + image, "-blur", "0.5x2", "./tmp/" + "5_" + image])
                 image = "5_" + image
-
         
         html_header()
         html_image(image)
         html_filter(filter_parameter)
         html_option(filter_parameter)   
-        print("""<p>{0}</p>""".format(platform.system()))
+        # print("""<p>{0}</p>""".format(platform.system()))
         html_tail()
