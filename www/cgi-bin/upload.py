@@ -92,6 +92,8 @@ else:
         html_tail()
       
       else:
+        if not os.path.exists('./tmp/'):
+          os.makedirs('./tmp/')
         # strip leading path from file name to avoid directory traversal attacks
         fn = uuid.uuid4().hex + '_' + os.path.basename(fileitem.filename)
         open('./tmp/' + fn, 'wb').write(fileitem.file.read())
@@ -107,7 +109,6 @@ else:
             cookies.cookies_head(cookie)
             html_header()
             print("""
-            <h>Success</h>
             <meta http-equiv="refresh" content="0; url=/cgi-bin/edit.py"/>
             """)
             html_tail()

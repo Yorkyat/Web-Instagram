@@ -91,7 +91,8 @@ def check_img_table_exist(c):
     c.execute(sql)
 
 
-
+if not os.path.exists('./tmp/'):
+    os.makedirs('./tmp/')
 
 form = cgi.FieldStorage() 
 

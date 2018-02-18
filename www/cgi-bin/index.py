@@ -4,6 +4,7 @@ import cgi, cgitb
 import sqlite3
 import cookies
 import math
+import os
 
 def html_header():
   print("""Content-Type: text/html\r\n
@@ -147,6 +148,9 @@ def html_upload(session_id):
       </div>
     </form>
     """)
+
+if not os.path.exists('./tmp/'):
+  os.makedirs('./tmp/')
 
 cookie = cookies.create_cookies()
 session_id = cookies.retrieve_cookies(cookie, 'session')
