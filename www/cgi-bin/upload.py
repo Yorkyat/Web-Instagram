@@ -6,6 +6,7 @@ import os
 import sqlite3
 import cookies
 import subprocess
+import uuid
 
 def html_header():
   print("""Content-Type: text/html\r\n
@@ -92,10 +93,12 @@ else:
       
       else:
         # strip leading path from file name to avoid directory traversal attacks
-        fn = os.path.basename(fileitem.filename)
+        fn = uuid.uuid4().hex + '_' + os.path.basename(fileitem.filename)
         open('./tmp/' + fn, 'wb').write(fileitem.file.read())
-        
         file_type = retrieve_file_type('./tmp/' + fn)
+
+        # change the exif orientation value to prevent image rotated problem
+        subprocess.run(["magick", "convert", './tmp/' + fn, "-auto-orient", './tmp/' + fn])
 
         if (file_type == "JPEG") or (file_type == "GIF") or (file_type == "PNG"):
           if file_extension_matching(file_type, filename_split[1]):
@@ -105,8 +108,9 @@ else:
             html_header()
             print("""
             <h>Success</h>
+            <img style="max-height: 200px; max-width: 200px; width: auto; height: auto" src={0}>
             <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>
-            """)
+            """.format('/tmp/' + fn))
             html_tail()
 
           else:
