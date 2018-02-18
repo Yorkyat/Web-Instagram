@@ -108,9 +108,8 @@ else:
             html_header()
             print("""
             <h>Success</h>
-            <img style="max-height: 200px; max-width: 200px; width: auto; height: auto" src={0}>
-            <meta http-equiv="refresh" content="2; url=/cgi-bin/index.py"/>
-            """.format('/tmp/' + fn))
+            <meta http-equiv="refresh" content="0; url=/cgi-bin/edit.py"/>
+            """)
             html_tail()
 
           else:
