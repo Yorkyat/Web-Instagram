@@ -183,8 +183,12 @@ else:
             print("""<h1>Success</h1>
                     <p>Upload success</p>
                     <div class="container text-center my-3">
-                        <img style="max-height: 1000px; max-width: 1000px; width: auto; height: auto" src={0}>
-                        <a href={1}><span>{1}</span></a>
+                        <div>
+                            <img style="max-height: 1000px; max-width: 1000px; width: auto; height: auto" src={0}>
+                        </div>
+                        <div>
+                            <a href={1}><span>{1}</span></a>
+                        </div
                     </div>
                     <div class="container text-right">
                         <a href="/cgi-bin/index.py"><button type="button" class="btn btn-primary mx-3 text-right">Back to Index Page</button></a>
