@@ -87,8 +87,28 @@ def html_extend_cookies(session_id, upload_mode, image, cookie):
         cookies.cookies_head(cookie)
 
 def check_img_table_exist(c):
-    sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`image` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL)"
+    sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`image` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)"
     c.execute(sql)
+
+def remove_tmp_images():
+    if os.path.exists("./tmp/" + image):
+        os.remove("./tmp/" + image)
+    if os.path.exists("./tmp/" + '1_' + image):
+        os.remove("./tmp/" + '1_' + image)
+    if os.path.exists("./tmp/" + '2_' + image):
+        os.remove("./tmp/" + '2_' + image)
+    if os.path.exists("./tmp/" + '3_' + image):
+        os.remove("./tmp/" + '3_' + image)
+    if os.path.exists("./tmp/" + '4_' + image):
+        os.remove("./tmp/" + '4_' + image)
+    if os.path.exists("./tmp/" + '5_' + image):
+        os.remove("./tmp/" + '5_' + image)
+    if os.path.exists("./tmp/" + 'itm_4_' + image):
+        os.remove("./tmp/" + 'itm_4_' + image)
+    if os.path.exists("./tmp/" + 'tmp_3_' + image):
+        os.remove("./tmp/" + 'tmp_3_' + image)
+    if os.path.exists("./tmp/" + 'tmp_4_' + image):
+        os.remove("./tmp/" + 'tmp_4_' + image)
 
 
 if not os.path.exists('./tmp/'):
@@ -110,6 +130,7 @@ if (session_id == False) or (upload_mode == False) or (image == False):
   html_tail()
 
 else:
+    username = cookies.retrieve_username(session_id)
     html_extend_cookies(session_id, upload_mode, image, cookie)
     if "option" in form:
         option = form.getvalue('option')
@@ -121,26 +142,10 @@ else:
             filter_apply = filter[1]
 
         if option == "Discard":
+            # remove all used stuff
             cookies.del_cookies(cookie, 'upload-mode')
             cookies.del_cookies(cookie, 'image')
-            if os.path.exists("./tmp/" + image):
-                os.remove("./tmp/" + image)
-            if os.path.exists("./tmp/" + '1_' + image):
-                os.remove("./tmp/" + '1_' + image)
-            if os.path.exists("./tmp/" + '2_' + image):
-                os.remove("./tmp/" + '2_' + image)
-            if os.path.exists("./tmp/" + '3_' + image):
-                os.remove("./tmp/" + '3_' + image)
-            if os.path.exists("./tmp/" + '4_' + image):
-                os.remove("./tmp/" + '4_' + image)
-            if os.path.exists("./tmp/" + '5_' + image):
-                os.remove("./tmp/" + '5_' + image)
-            if os.path.exists("./tmp/" + 'itm_4_' + image):
-                os.remove("./tmp/" + 'itm_4_' + image)
-            if os.path.exists("./tmp/" + 'tmp_3_' + image):
-                os.remove("./tmp/" + 'tmp_3_' + image)
-            if os.path.exists("./tmp/" + 'tmp_4_' + image):
-                os.remove("./tmp/" + 'tmp_4_' + image)
+            remove_tmp_images()
 
             cookies.cookies_head(cookie)
             html_header()
@@ -148,7 +153,46 @@ else:
             html_tail()
             
         elif option == "Finish":
-            print("Hello World")
+            if filter_apply == None:
+                os.rename("./tmp/" + image, "./img/" + image)
+            else:
+                os.rename("./tmp/" + filter_apply + '_' + image, "./img/" + image)
+
+            conn = sqlite3.connect('../index.db')
+            cursor = conn.cursor()
+            check_img_table_exist(cursor)
+            if upload_mode == "public":
+                sql = "INSERT INTO `image` (`image`,`mode`) VALUES (?,?)"
+                cursor.execute(sql, (image, upload_mode,))
+                conn.commit()
+            else:
+                sql = "INSERT INTO `image` (`image`,`mode`,`username`) VALUES (?,?,?)"
+                cursor.execute(sql, (image, upload_mode, username,))
+                conn.commit()
+            conn.close()
+
+            # remove all used stuff
+            cookies.del_cookies(cookie, 'upload-mode')
+            cookies.del_cookies(cookie, 'image')
+            remove_tmp_images()
+            cookies.cookies_head(cookie)
+            html_header()
+            path = os.environ['HTTP_REFERER']
+            host = path.rsplit('/', 2)[0]
+            permalink = host + '/img/' + image
+            print("""<h1>Success</h1>
+                    <p>Upload success</p>
+                    <div class="container text-center my-3">
+                        <img style="max-height: 1000px; max-width: 1000px; width: auto; height: auto" src={0}>
+                        <a href={1}><span>{1}</span></a>
+                    </div>
+                    <div class="container text-right">
+                        <a href="/cgi-bin/index.py"><button type="button" class="btn btn-primary mx-3 text-right">Back to Index Page</button></a>
+                    </div>
+                    """.format("/img/" + image, permalink))
+            html_tail()
+        
+        # assume having unexpected error
         else:
             print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/edit.py" />""")
 
@@ -184,10 +228,8 @@ else:
             elif filter_apply == "5":
                 subprocess.run(["magick", "convert", "./tmp/" + image, "-blur", "0.5x2", "./tmp/" + "5_" + image])
                 image = "5_" + image
-        
         html_header()
         html_image(image)
         html_filter(filter_parameter)
         html_option(filter_parameter)   
-        # print("""<p>{0}</p>""".format(platform.system()))
         html_tail()

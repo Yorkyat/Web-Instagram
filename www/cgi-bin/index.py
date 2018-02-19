@@ -52,7 +52,7 @@ def html_extend_cookies(session_id, cookie):
     cookies.cookies_head(cookie)
 
 def check_img_table_exist(c):
-    sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`image` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL)"
+    sql = "CREATE TABLE IF NOT EXISTS 'image'(`pid` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`image` TEXT NOT NULL UNIQUE,`mode` TEXT NOT NULL,`username` TEXT,`timestamp` TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)"
     c.execute(sql)
 
 def html_index(session_id):
@@ -86,7 +86,7 @@ def html_index(session_id):
   if no_of_photo != 0:
     page_total = math.ceil(no_of_photo / 8)
 
-  if page_no > page_total:
+  if page_no > page_total or page_no < 1:
     print("""<meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>""")
   else:
     print("""
