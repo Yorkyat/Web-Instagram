@@ -179,14 +179,28 @@ else:
   cookie = cookies.create_cookies()
   session_id = cookies.retrieve_cookies(cookie, 'session')
 
-  html_extend_cookies(session_id, cookie)
-  html_header()
-
   if session_id:
     username = cookies.retrieve_username(session_id)
-    html_username(username)
-
-  html_account(session_id)
-  html_index(session_id)
-  html_upload(session_id)
-  html_tail()
+    if username == False:
+      cookies.del_cookies(cookie, 'session')
+      cookies.cookies_head(cookie)
+      html_header()
+      print("""
+      <meta http-equiv="refresh" content="0; url=/cgi-bin/index.py"/>
+      """)
+      html_tail()
+    else:
+      html_extend_cookies(session_id, cookie)
+      html_header()
+      html_username(username)
+      html_account(session_id)
+      html_index(session_id)
+      html_upload(session_id)
+      html_tail()
+  else:
+    html_header()
+    html_account(session_id)
+    html_index(session_id)
+    html_upload(session_id)
+    html_tail()
+    

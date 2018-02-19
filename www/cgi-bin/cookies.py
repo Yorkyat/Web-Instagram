@@ -75,7 +75,9 @@ def retrieve_username(session_id):
     sql = "SELECT `username` FROM `session` WHERE `session_id` = ?;"
     cursor.execute(sql, (session_id,))
     data = cursor.fetchone()
-    username = data[0]
     conn.close()
-    return username
-
+    if data == None:
+        return False
+    else:
+        username = data[0]
+        return username
