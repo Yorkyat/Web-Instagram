@@ -149,20 +149,44 @@ def html_upload(session_id):
     </form>
     """)
 
-if not os.path.exists('./tmp/'):
-  os.makedirs('./tmp/')
+conn = sqlite3.connect('../index.db')
+cursor = conn.cursor()
+sql = "SELECT * FROM sqlite_master WHERE name ='user' and type='table'"
+cursor.execute(sql)
+result = cursor.fetchone()
+conn.close()
+if result == None:
+  html_header()
+  print("""
+  <div class="container text-center my-3">
+    <div>
+      <h1>Please initialize!</h1>
+    </div>
+    <div>
+      <a href="/init.html"><span>Initialize</span></a>
+    </div>
+  </div>
+  """)
+  html_tail()
 
-cookie = cookies.create_cookies()
-session_id = cookies.retrieve_cookies(cookie, 'session')
+else:
+  if not os.path.exists('./tmp/'):
+    os.makedirs('./tmp/')
 
-html_extend_cookies(session_id, cookie)
-html_header()
+  if not os.path.exists('./img/'):
+    os.makedirs('./img/')
 
-if session_id:
-  username = cookies.retrieve_username(session_id)
-  html_username(username)
+  cookie = cookies.create_cookies()
+  session_id = cookies.retrieve_cookies(cookie, 'session')
 
-html_account(session_id)
-html_index(session_id)
-html_upload(session_id)
-html_tail()
+  html_extend_cookies(session_id, cookie)
+  html_header()
+
+  if session_id:
+    username = cookies.retrieve_username(session_id)
+    html_username(username)
+
+  html_account(session_id)
+  html_index(session_id)
+  html_upload(session_id)
+  html_tail()
